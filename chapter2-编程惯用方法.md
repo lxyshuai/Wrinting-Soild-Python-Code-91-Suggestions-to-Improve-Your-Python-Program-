@@ -50,3 +50,58 @@ x, y = y, x
 * 防止eval()注入
 * 如果使用对象不是信任的,避免使用eval(),在需要使用的地方用安全性更好的ast.literal_eval代替
 
+## 使用enumerater()获取序列的索引和值
+```python
+li = [1, 2, 3, 4]
+for i, e in enumerater(li):
+    print i, e
+```
+* enumerater不适合字典,虽然不错误,但是结果与期望大相径庭
+
+## == 和is 的使用场景
+* is 是对象标识符,用来检查对象的标示符是否一致,也就是比较两个对象是否拥有同一块内存空间,不能被重载
+* == 检验连个对象的值是否相等,实际调用``__eq()__``方法,可以重载.
+
+## 使用Unicode保证兼容性
+* str和Unicode(P38)
+
+## 构建合理的包层次来管理module
+* Package(包)包含模块,还包含一个``__init__.py``文件
+```python
+Package/__init__.py
+    Module1.py
+    Module2.py
+    SubPackage/__init__.py
+        Module1.py
+        Module2.py
+```
+* 包导入
+    1. 直接导入一个包
+    ```python
+    import Package
+    ```
+    2. 导入子模块或子包
+    ```python
+    from Package import Module1
+    import Package.Module1
+    from Package import Subpackage
+    import Package.Subpackage
+    from Package.Subpackage import Module1
+    import Package.Subpackage.Module1
+    ```
+* ``__init__.py``最明显作用是使包和普通目录区分,其次可以在该文件声明模块级别的import语句从而使其包级别可见
+```python
+# 如果要importb包Package中Module1中的类Test,当__init__.py文件为空需要使用完整路径申明
+from Package.Module1 import Test
+# 如果在__init__.py文件中添加from Module1 import Test,可以直接使用如下导入
+from Package import Test
+# 当意图使用from Package import *将包Package中所有模块导入当前命名空间并不能使得导入的模块生效,Python不能正确判断使得导入的模块生效(因为不同平台间文件命名规则不同),
+因此它仅仅执行__init__.py文件.如果要控制模块导,则需要修稿__init__文件``
+# 通过定义__init__.py文件中的__all__变量,控制需要导入的子包或者模块
+```
+
+
+
+
+
+
